@@ -2,14 +2,17 @@
 
 enum ProjectStatus {
   Active,
-  Finished
+  Finished,
 }
 class Project {
-  constructor(public id: string, public title: string, public description: string, public people: number, public status: ProjectStatus) {
-
-  }
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
 }
-
 
 // Project State Management
 
@@ -137,7 +140,15 @@ class ProjectList {
     this.element.id = `${this.type}-projects`;
 
     state.addListener((projects: any[]) => {
-      this.assignedProejcts = projects;
+      const relevantProjects = projects.filter((prj) => {
+        if (this.type === "active") {
+          return prj.status === ProjectStatus.Active;
+        } else {
+          return prj.status === ProjectStatus.Finished;
+        }
+      });
+
+      this.assignedProejcts = relevantProjects;
       this.renderProjects();
     });
 
@@ -146,9 +157,12 @@ class ProjectList {
   }
 
   private renderProjects() {
-    const listElement = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+    const listElement = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    listElement.innerHTML = "";
     for (const prjItem of this.assignedProejcts) {
-      const listItem = document.createElement('li');
+      const listItem = document.createElement("li");
       listItem.textContent = prjItem.title;
       listElement.appendChild(listItem);
     }
