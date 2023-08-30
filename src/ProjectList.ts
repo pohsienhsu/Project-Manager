@@ -1,27 +1,27 @@
+import { Component } from "./Component";
 import { Manager } from "./Manager";
 import { Project, ProjectStatus } from "./Project";
 
 // ProjectList class
-export class ProjectList {
-  private templateElement: HTMLTemplateElement;
-  private hostElement: HTMLDivElement;
-  private element: HTMLElement;
+export class ProjectList extends Component<HTMLDivElement, HTMLElement> {
   private assignedProejcts: Project[];
 
   constructor(private type: "active" | "finished") {
-    this.templateElement = document.getElementById(
-      "project-list"
-    )! as HTMLTemplateElement;
-    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+    super("project-list", "app", false, `${type}-projects`);
     this.assignedProejcts = [];
 
-    const importedNode = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    this.element = importedNode.firstElementChild as HTMLElement;
-    this.element.id = `${this.type}-projects`;
+    this.renderContent();
+    this.configure();
+  }
 
+  renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " Project";
+  }
+
+  configure() {
     Manager.getInstance().attachListener((projects: any[]) => {
       const relevantProjects = projects.filter((prj) => {
         if (this.type === "active") {
@@ -34,9 +34,6 @@ export class ProjectList {
       this.assignedProejcts = relevantProjects;
       this.renderProjects();
     });
-
-    this.attach();
-    this.renderContent();
   }
 
   private renderProjects() {
@@ -49,16 +46,5 @@ export class ProjectList {
       listItem.textContent = prjItem.title;
       listElement.appendChild(listItem);
     }
-  }
-
-  private renderContent() {
-    const listId = `${this.type}-projects-list`;
-    this.element.querySelector("ul")!.id = listId;
-    this.element.querySelector("h2")!.textContent =
-      this.type.toUpperCase() + " Project";
-  }
-
-  private attach() {
-    this.hostElement.insertAdjacentElement("beforeend", this.element);
   }
 }
