@@ -1,33 +1,29 @@
 // Project State Management
 
+import { Project } from "./Project";
+
+export type Listener = (items: Project[]) => void;
 export class ProjectState {
-  private listeners: any[] = [];
-  private projects: any[] = [];
-  private static instance: ProjectState;
+  private listeners: Listener[] = [];
+  private projects: Project[] = [];
 
-  private constructor() {}
-
-  static getInstance() {
-    if (!this.instance) {
-      this.instance = new ProjectState();
-    }
-    return this.instance;
-  }
+  constructor() {}
 
   addProject(title: string, description: string, people: number) {
-    const newProject = {
-      id: Math.random().toString(),
-      title: title,
-      description: description,
-      people: people,
-    };
+    const newProject = new Project(
+      Math.random().toString(),
+      title,
+      description,
+      people
+    );
 
     this.projects.push(newProject);
     for (const listenerFn of this.listeners) {
       listenerFn(this.projects.slice());
     }
   }
-  addListener(listenerFn: Function) {
+
+  addListener(listenerFn: Listener) {
     this.listeners.push(listenerFn);
   }
 }

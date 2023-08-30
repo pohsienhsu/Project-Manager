@@ -1,13 +1,14 @@
-import { ProjectState } from "./ProjectState";
+import { Manager } from "./Manager";
+import { Project, ProjectStatus } from "./Project";
 
 // ProjectList class
 export class ProjectList {
   private templateElement: HTMLTemplateElement;
   private hostElement: HTMLDivElement;
   private element: HTMLElement;
-  private assignedProejcts: any[];
+  private assignedProejcts: Project[];
 
-  constructor(state: ProjectState, private type: "active" | "finished") {
+  constructor(private type: "active" | "finished") {
     this.templateElement = document.getElementById(
       "project-list"
     )! as HTMLTemplateElement;
@@ -21,8 +22,16 @@ export class ProjectList {
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
 
-    state.addListener((projects: any[]) => {
-      this.assignedProejcts = projects;
+    Manager.getInstance().attachListener((projects: any[]) => {
+      const relevantProjects = projects.filter((prj) => {
+        if (this.type === "active") {
+          return prj.status === ProjectStatus.Active;
+        } else {
+          return prj.status === ProjectStatus.Finished;
+        }
+      });
+
+      this.assignedProejcts = relevantProjects;
       this.renderProjects();
     });
 
@@ -34,6 +43,7 @@ export class ProjectList {
     const listElement = document.getElementById(
       `${this.type}-projects-list`
     )! as HTMLUListElement;
+    listElement.innerHTML = "";
     for (const prjItem of this.assignedProejcts) {
       const listItem = document.createElement("li");
       listItem.textContent = prjItem.title;
