@@ -2,9 +2,17 @@
 
 import { Project } from "./Project";
 
-export type Listener = (items: Project[]) => void;
+export type Listener<T> = (items: T[]) => void;
+
+class State<T> {
+  private listeners: Listener<T>[] = [];
+
+  addListener(listenerFn: Listener<T>) {
+    this.listeners.push(listenerFn);
+  }
+}
+
 export class ProjectState {
-  private listeners: Listener[] = [];
   private projects: Project[] = [];
 
   constructor() {}
@@ -18,12 +26,8 @@ export class ProjectState {
     );
 
     this.projects.push(newProject);
-    for (const listenerFn of this.listeners) {
-      listenerFn(this.projects.slice());
-    }
-  }
-
-  addListener(listenerFn: Listener) {
-    this.listeners.push(listenerFn);
+    // for (const listenerFn of this.listeners) {
+    //   listenerFn(this.projects.slice());
+    // }
   }
 }

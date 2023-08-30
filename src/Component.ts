@@ -1,7 +1,7 @@
 export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
-  templateElement: HTMLTemplateElement;
-  hostElement: T;
-  element: U;
+  protected templateElement: HTMLTemplateElement;
+  protected hostElement: T;
+  protected element: U;
 
   constructor(
     templateId: string,
