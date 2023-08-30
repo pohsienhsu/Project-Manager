@@ -1,3 +1,4 @@
+import { Component } from "./Component";
 import { Manager } from "./Manager";
 
 // Validation
@@ -65,27 +66,13 @@ function autobind(
 }
 
 // ProjectInput class
-export class ProjectInput {
-  private templateElement: HTMLTemplateElement;
-  private hostElement: HTMLDivElement;
-  private element: HTMLFormElement;
+export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   private titleInputElement: HTMLInputElement;
   private descriptionInputElement: HTMLInputElement;
   private peopleInputElement: HTMLInputElement;
 
   constructor() {
-    this.templateElement = document.getElementById(
-      "project-input"
-    )! as HTMLTemplateElement;
-    this.hostElement = document.getElementById("app")! as HTMLDivElement;
-
-    const importedNode = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    this.element = importedNode.firstElementChild as HTMLFormElement;
-    this.element.id = "user-input";
-
+    super("project-input", "app", true, "user-input");
     this.titleInputElement = this.element.querySelector(
       "#title"
     ) as HTMLInputElement;
@@ -97,7 +84,12 @@ export class ProjectInput {
     ) as HTMLInputElement;
 
     this.configure();
-    this.attach();
+  }
+
+  renderContent() {}
+
+  configure() {
+    this.element.addEventListener("submit", this.submitHandler);
   }
 
   private gatherUserInput(): [string, string, number] | void {
@@ -147,13 +139,5 @@ export class ProjectInput {
       Manager.getInstance().createProject(title, description, people);
       this.clearInputs();
     }
-  }
-
-  private configure() {
-    this.element.addEventListener("submit", this.submitHandler);
-  }
-
-  private attach() {
-    this.hostElement.insertAdjacentElement("afterbegin", this.element);
   }
 }
