@@ -1,4 +1,4 @@
-import { ProjectState } from "./ProjectState";
+import { Manager } from "./Manager";
 
 // Validation
 interface Validatable {
@@ -72,11 +72,8 @@ export class ProjectInput {
   private titleInputElement: HTMLInputElement;
   private descriptionInputElement: HTMLInputElement;
   private peopleInputElement: HTMLInputElement;
-  private inputState: ProjectState;
 
-  constructor(state: ProjectState) {
-    this.inputState = state;
-
+  constructor() {
     this.templateElement = document.getElementById(
       "project-input"
     )! as HTMLTemplateElement;
@@ -147,7 +144,7 @@ export class ProjectInput {
     const userInput = this.gatherUserInput();
     if (Array.isArray(userInput)) {
       const [title, description, people] = userInput;
-      this.inputState.addProject(title, description, people);
+      Manager.getInstance().createProject(title, description, people);
       this.clearInputs();
     }
   }
