@@ -5,17 +5,19 @@ import { Project } from "./Project";
 export type Listener<T> = (items: T[]) => void;
 
 class State<T> {
-  private listeners: Listener<T>[] = [];
+  protected listeners: Listener<T>[] = [];
 
   addListener(listenerFn: Listener<T>) {
     this.listeners.push(listenerFn);
   }
 }
 
-export class ProjectState {
+export class ProjectState extends State<Project>{
   private projects: Project[] = [];
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   addProject(title: string, description: string, people: number) {
     const newProject = new Project(
@@ -26,8 +28,8 @@ export class ProjectState {
     );
 
     this.projects.push(newProject);
-    // for (const listenerFn of this.listeners) {
-    //   listenerFn(this.projects.slice());
-    // }
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice());
+    }
   }
 }

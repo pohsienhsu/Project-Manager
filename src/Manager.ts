@@ -1,3 +1,4 @@
+import { Project } from "./Project";
 import { ProjectList } from "./ProjectList";
 import { Listener, ProjectState } from "./ProjectState";
 
@@ -9,7 +10,9 @@ export class Manager {
   ];
   private static instance: Manager;
 
-  private constructor() {}
+  private constructor() {
+    console.log(this.projectLists);
+  }
 
   public static getInstance() {
     if (!this.instance) {
@@ -22,7 +25,7 @@ export class Manager {
     this.state.addProject(title, description, people);
   }
 
-  public attachListener(listenerFn: Listener) {
+  public attachListener(listenerFn: Listener<Project>) {
     this.state.addListener(listenerFn);
   }
 }
